@@ -1,0 +1,79 @@
+server:
+  port: 80
+spring:
+  application:
+    name: community-cloud-gateway
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]': # 匹配所有请求
+            allowedOrigins: "*" #跨域处理 允许所有的域
+            allowedHeaders: "*" # 允许所有的请求头携带过来
+            allowedMethods: # 支持的方法
+              - GET
+              - POST
+              - PUT
+              - DELETE
+      routes:
+        # 用户微服务
+        - id: community-service-user
+          uri: lb://community-service-user #所有的请求都交给user服务处理
+          predicates:
+            - Path=/user/**
+          filters:
+            - StripPrefix=1  #请求路径加前缀
+            - name: RequestRateLimiter # 限流的名字底层默认的，不能更改
+              args:
+                key-resolver: "#{@ipKeyResolver}"     # SPEL表达式 与解析器限流bean当中的key对应
+                redis-rate-limiter.burstCapacity: 3   # 允许一秒钟最大请求数    令牌桶容量
+                redis-rate-limiter.replenishRate: 2  #希望允许每秒执行多少请求  填充速率
+
+
+          # 电梯服务
+        - id: community-service-elevator
+          uri: lb://community-service-elevator #所有的请求都交给user服务处理
+          predicates:
+            - Path=/elevator/**
+          filters:
+            - StripPrefix=1  #请求路径加前缀
+            - name: RequestRateLimiter # 限流的名字底层默认的，不能更改
+              args:
+                key-resolver: "#{@ipKeyResolver}"     # SPEL表达式 与解析器限流bean当中的key对应
+                redis-rate-limiter.burstCapacity: 3   # 允许一秒钟最大请求数    令牌桶容量
+                redis-rate-limiter.replenishRate: 2  #希望允许每秒执行多少请求  填充速率
+
+
+
+  main:
+    allow-bean-definition-overriding: true
+    web-application-type: reactive
+
+  redis:
+    host: 192.168.211.128
+    port: 6379
+#eureka client 配置
+eureka:
+  client:
+    # 获取注册表时间隔秒, 默认30
+    registry-fetch-interval-seconds: 5
+    # 实例信息复制间隔秒, 默认30
+    instance-info-replication-interval-seconds: 10
+    # 服务地址
+    service-url:
+      defaultZone: http://192.168.211.129:7001/eureka
+  instance:
+    prefer-ip-address: true
+    # 实例ID
+    instance-id: ${spring.application.name}@${spring.cloud.client.ip-address}:${server.port}
+    # 租约续订间隔, 心跳检测, 默认30秒
+    lease-renewal-interval-in-seconds: 10
+    # 租约到期持续时间, 停止心跳10秒后剔除服务, 默认90秒
+    lease-expiration-duration-in-seconds: 10
+#management:
+#  endpoint:
+#    gateway:
+#      enabled: true
+#    web:
+#      exposure:
+#        include: true

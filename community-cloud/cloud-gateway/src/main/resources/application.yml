@@ -1,0 +1,6 @@
+spring:
+  application:
+    name:  @artifactId@
+
+  profiles:
+    active: dev
