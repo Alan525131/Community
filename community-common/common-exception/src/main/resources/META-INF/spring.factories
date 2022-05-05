@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.lufengxue.exception.proper.ExceptionPrintProperties,\
+  org.lufengxue.exception.global.GlobalException

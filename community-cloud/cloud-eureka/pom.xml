@@ -17,7 +17,7 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
         </dependency>
-        <!--引入swagger依赖,排除model-->
+        <!--引入swagger依赖-->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>common-swagger</artifactId>

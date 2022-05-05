@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
  * 描    述:
  */
 @Slf4j
-@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
+@SpringBootApplication
 @EnableEurekaClient
 public class GatewayApplication {
     public static void main(String[] args) {

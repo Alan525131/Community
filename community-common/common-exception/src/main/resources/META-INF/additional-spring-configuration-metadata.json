@@ -1,0 +1,18 @@
+{
+  "properties": [
+    {
+      "name": "global.exception.print.headers",
+      "type": "java.lang.String[]",
+      "description": "需要打印的请求头名, 不区分大小写",
+      "sourceType": "org.lufengxue.exception.proper.ExceptionPrintProperties",
+      "defaultValue": [
+        "Authorization",
+        "username",
+        "Content-Type",
+        "Origin",
+        "User-Agent",
+        "Accept-Language"
+      ]
+    }
+  ]
+}

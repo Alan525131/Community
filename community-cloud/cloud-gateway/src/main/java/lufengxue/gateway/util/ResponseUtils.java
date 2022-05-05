@@ -2,9 +2,9 @@ package lufengxue.gateway.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import lufengxue.enums.ResponseEnum;
-import lufengxue.exception.BaseException;
-import lufengxue.response.Result;
+import org.lufengxue.enums.ResponseEnum;
+import org.lufengxue.exception.BaseException;
+import org.lufengxue.response.Result;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
