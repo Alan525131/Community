@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--name:变量名 scope: 范围 source: spring运行环境中的key defaultValue 如果没有获取到,设置默认值
+    property 普通变量,SpringProperty 从spring运行环境中去取赋值给name  服务名:spring 应用名-->
+    <springProperty name="SERVER_NAME" scope="context" source="spring.application.name" defaultValue="application"/>
+    <!--服务器IP地址-->
+    <springProperty name="SERVER_IP" scope="context" source="spring.cloud.client.ip-address" defaultValue="0.0.0.0"/>
+    <!--服务端口-->
+    <springProperty name="SERVER_PORT" scope="context" source="server.port" defaultValue="0000"/>
+    <!--文件路径-->
+    <springProperty name="FILE_PATH" scope="context" source="logging.file.path" defaultValue="./../logs"/>
+    <!--最大文件大小-->
+    <springProperty name="MAX_FILE_SIZE" scope="context" source="logging.file.maxSize" defaultValue="100MB"/>
+    <!--最久保留时间(天)-->
+    <springProperty name="MAX_HISTORY" scope="context" source="logging.file.maxHistory" defaultValue="30"/>
+    <!--spring 环境-->
+    <springProperty name="SPRING_ACTIVE" scope="context" source="spring.profiles.active" defaultValue="NA"/>
+    <!--总日志最大大小  申明这些变量名,下面引用-->
+    <property name="TOTAL_SIZE_CAP" value="10GB"/>
+
+
+    <!-- 控制台打印颜色 -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+
+    <!-- 控制台打印格式 -->
+    <property name="CONSOLE_LOG_PATTERN" value="[${SPRING_ACTIVE}] ${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(-){faint} %clr([%15.15t]){faint} %clr(%40.40logger{39}){cyan}%clr(:){cyan}%clr(%-4.4L){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+
+    <!-- 文件打印格式 -->
+    <property name="FILE_PATTERN" value="[${SPRING_ACTIVE}:${SERVER_PORT}] %d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } [%15.15t] %40.40logger{39}:%-4.4L : %m%n" />
+
+    <!-- ERR 日志文件打印设置 -->
+    <appender name="errorFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <!--error级别,accept 匹配到的打印,deny 没有匹配到的不打印-->
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <!--日志文件保存的路径-->
+        <file>${FILE_PATH}/today/error_${SERVER_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!--超过一天后,老日志自动压缩打包,存放位置-->
+            <fileNamePattern>${FILE_PATH}/${SERVER_NAME}/error/error_${SERVER_NAME}_%d{yyyy-MM-dd}_%i.log.gz</fileNamePattern>
+            <!--打包最大文件大小,超过这个大小就拆成多个包-->
+            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            <!--最久保留时间,超过这个时间就自动删除-->
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <!--日志总大小:{应该是所有日志超过这个大小就自动删除最早的}-->
+            <totalSizeCap>${TOTAL_SIZE_CAP}</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <!--日志拼接格式-->
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+
+    <!-- INFO 日志文件打印设置 -->
+    <appender name="infoFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${FILE_PATH}/today/info_${SERVER_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${FILE_PATH}/${SERVER_NAME}/info/info_${SERVER_NAME}_%d{yyyy-MM-dd}_%i.log.gz</fileNamePattern>
+            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${TOTAL_SIZE_CAP}</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+
+    <!-- 打印模式选择 ::如果是sit,uat,pro 等环境,就把日志输出到文件,否则就把日志打印到控制台-->
+    <root level="INFO">
+        <if condition='property("SPRING_ACTIVE").contains("sit") || property("SPRING_ACTIVE").contains("uat") || property("SPRING_ACTIVE").contains("pro") || property("SPRING_ACTIVE").contains("test") || property("SPRING_ACTIVE").contains("back")' >
+            <!-- 文件打印 -->
+            <then>
+                <appender-ref ref="infoFile"/>
+                <appender-ref ref="errorFile"/>
+            </then>
+            <!-- 控制台打印 -->
+            <else>
+                <appender-ref ref="console"/>
+            </else>
+        </if>
+    </root>
+
+
+
+</configuration>

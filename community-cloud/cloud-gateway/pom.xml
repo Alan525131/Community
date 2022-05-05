@@ -52,6 +52,11 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>common-swagger</artifactId>
         </dependency>
+        <!-- 日志配置 -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>common-logger</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>

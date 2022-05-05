@@ -41,7 +41,11 @@
             <artifactId>common-exception</artifactId>
         </dependency>
 
-
+        <!-- 日志配置 -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>common-logger</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

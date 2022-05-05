@@ -5,36 +5,36 @@
 <mapper namespace="org.lufengxue.user.mapper.UserMapper">
 
 
-<!--    &lt;!&ndash;添加用户数据&ndash;&gt;-->
-<!--        <insert id="insert" parameterType="org.lufengxue.pojo.user.po.UserPo" >-->
+    <!--添加用户数据-->
+        <insert id="insert" parameterType="org.lufengxue.pojo.user.po.UserPo" >
 
-<!--        insert into ele_user-->
-<!--                    (username,password,sex,phone,created_date,updated_date,nick_name,status)-->
-<!--                    value (#{username},#{password},#{sex}, #{phone},#{createdDate},#{updatedDate},#{nickName},#{status})-->
-<!--    </insert>-->
-<!--    &lt;!&ndash;更新数据  &ndash;&gt;-->
-<!--    <update id="updateUser" parameterType="org.lufengxue.pojo.user.po.UserPo">-->
-<!--        update-->
-<!--                ele_user-->
-<!--        set-->
-<!--                username = #{username},password= #{password},sex = #{sex}, phone = #{phone},created_date = #{createdDate},-->
-<!--                updated_date = #{updatedDate},nick_name = #{nickName},status = #{status}-->
-<!--        where-->
-<!--                nick_name=#{nickName}-->
-<!--    </update>-->
-<!--    &lt;!&ndash;根据用户id删除数据&ndash;&gt;-->
+        insert into ele_user
+                    (username,password,sex,phone,created_date,updated_date,nick_name,status)
+                    value (#{username},#{password},#{sex}, #{phone},#{createdDate},#{updatedDate},#{nickName},#{status})
+    </insert>
+    <!--更新数据  -->
+    <update id="updateUser" parameterType="org.lufengxue.pojo.user.po.UserPo">
+        update
+                ele_user
+        set
+                username = #{username},password= #{password},sex = #{sex}, phone = #{phone},created_date = #{createdDate},
+                updated_date = #{updatedDate},nick_name = #{nickName},status = #{status}
+        where
+                nick_name=#{nickName}
+    </update>
+    <!--根据用户id删除数据-->
 
-<!--    <delete id="deleteId" parameterType="String">-->
-<!--        delete from ele_user where username=#{username}-->
-<!--    </delete>-->
+    <delete id="deleteId" parameterType="String">
+        delete from ele_user where username=#{username}
+    </delete>
 
-<!--    &lt;!&ndash;  根据用户名查询查询 &ndash;&gt;-->
-<!--    <select id="findByName" resultType="org.lufengxue.pojo.user.dto.UserDto">-->
-<!--        select * from ele_user where username=#{username}-->
-<!--    </select>-->
-<!--    &lt;!&ndash;查询所有数据&ndash;&gt;-->
-<!--    <select id="findAll" resultType="org.lufengxue.pojo.user.dto.UserDto">-->
-<!--        select * from ele_user-->
-<!--    </select>-->
+    <!--  根据用户名查询查询 -->
+    <select id="findByName" resultType="org.lufengxue.pojo.user.dto.UserDto">
+        select * from ele_user where username=#{username}
+    </select>
+    <!--查询所有数据-->
+    <select id="findAll" resultType="org.lufengxue.pojo.user.dto.UserDto">
+        select * from ele_user
+    </select>
 
 </mapper>
