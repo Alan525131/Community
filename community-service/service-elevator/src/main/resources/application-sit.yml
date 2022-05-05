@@ -1,0 +1,66 @@
+server:
+  port: 18088
+spring:
+  application:
+    name: service-elevator
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.211.128:3306/elevator_management?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&serverTimezone=UTC
+    username: root
+    password: root
+  #    url: jdbc:mysql://192.168.211.132:3306/changgou_user?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&serverTimezone=UTC
+  #    username: root
+  #    password: 123456
+  main:
+    allow-bean-definition-overriding: true
+#  cloud:
+#    alibaba:
+#      seata:
+#        tx-service-group: my_test_tx_group
+eureka:
+  client:
+    service-url:
+      defaultZone: http://192.168.211.129:7001/eureka
+  instance:
+    prefer-ip-address: true
+feign:
+  hystrix:
+    enabled: true
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true #启用驼峰命名
+    #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.lufengxue.elevator.log.SqlPrinter
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  #mybatis-plus:
+  # 如果是放在src/main/java目录下 classpath:/com/*/*/mapper/*Mapper.xml
+  # 如果是放在resource目录 classpath:/mapper/**.xml
+#  mapper-locations: classpath*:/**/mapper/xml/*.xml
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#seata:
+#  enable-auto-data-source-proxy: false # 不在用自动代理，自动代理的时候hikariCp链接池会有问题，采用druid的数据源
+logging:
+  level:
+    org.lufengxue.mapper: debug
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000 # 5s
+          strategy: SEMAPHORE  #feign传递token需要
+
+knife4j:
+  setting:
+    enable: true
+    swaggerModelName: 电梯管理服务
+    description: 提供电梯增删改查等服务
+    version: @submit.version@
+
+# 全局异常
+global:
+  exception:
+    print:
+      headers:

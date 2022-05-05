@@ -82,13 +82,13 @@
                 <artifactId>jjwt</artifactId>
                 <version>0.9.0</version>
             </dependency>
-
+            <!--德鲁伊的数据源-->
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid-spring-boot-starter</artifactId>
                 <version>1.2.5</version>
             </dependency>
-
+            <!--swagger起步依赖-->
             <dependency>
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>knife4j-micro-spring-boot-starter</artifactId>

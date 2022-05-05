@@ -2,7 +2,7 @@ server:
   port: 80
 spring:
   application:
-    name: community-cloud-gateway
+    name: cloud-gateway
   cloud:
     gateway:
       globalcors:
@@ -17,8 +17,8 @@ spring:
               - DELETE
       routes:
         # 用户微服务
-        - id: community-service-user
-          uri: lb://community-service-user #所有的请求都交给user服务处理
+        - id: service-user
+          uri: lb://service-user #所有的请求都交给user服务处理
           predicates:
             - Path=/user/**
           filters:
@@ -31,8 +31,8 @@ spring:
 
 
           # 电梯服务
-        - id: community-service-elevator
-          uri: lb://community-service-elevator #所有的请求都交给user服务处理
+        - id: service-elevator
+          uri: lb://service-elevator #所有的请求都交给user服务处理
           predicates:
             - Path=/elevator/**
           filters:

@@ -1,5 +1,4 @@
 package org.lufengxue.pojo.elevator.elevatorDto;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

@@ -10,11 +10,38 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>community-service</artifactId>
+    <description>所有微服务的父工程</description>
     <packaging>pom</packaging>
     <modules>
         <module>service-elevator</module>
         <module>service-user</module>
     </modules>
 
+    <dependencies>
+
+        <!--mybatis的 起步依赖-->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+        </dependency>
+        <!--实体类-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>common-model</artifactId>
+        </dependency>
+
+        <!--引入swagger配置类-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>common-swagger</artifactId>
+        </dependency>
+        <!--全局异常依赖-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>common-exception</artifactId>
+        </dependency>
+
+
+    </dependencies>
 
 </project>
