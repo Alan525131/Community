@@ -11,5 +11,13 @@
 
     <artifactId>common-redis</artifactId>
 
+    <description> redis 配置</description>
+    <dependencies>
+        <!-- redis 使用-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

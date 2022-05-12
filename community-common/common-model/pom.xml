@@ -47,11 +47,7 @@
             <artifactId>mybatis-plus-annotation</artifactId>
         </dependency>
 
-        <!--MySQL数据库驱动-->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
+
 
         <!-- Jackson 时间输入格式化支持 -->
         <dependency>

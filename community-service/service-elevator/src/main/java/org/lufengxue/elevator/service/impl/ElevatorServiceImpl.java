@@ -1,5 +1,7 @@
 package org.lufengxue.elevator.service.impl;
 
+
+import org.lufengxue.contanents.CacheName;
 import org.lufengxue.elevator.mapper.ElevatorMapper;
 import org.lufengxue.elevator.service.ElevatorService;
 import lombok.extern.slf4j.Slf4j;
@@ -11,12 +13,10 @@ import org.lufengxue.exception.UserException;
 import org.lufengxue.pojo.elevator.elevatorDto.Elevator;
 import org.lufengxue.pojo.elevator.elevatorDto.Floor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 作 者: 陆奉学
@@ -34,19 +34,15 @@ public class ElevatorServiceImpl implements ElevatorService {
 
     @Autowired
     private ElevatorMapper elevatorMapper;
-    /**
-     * @param buildingName 大楼名字
-     *  根据大楼名字 查询所有本大楼的楼层号
-     */
-    @Override
-    public List<Floor> findFloor(String buildingName) {
-        return elevatorMapper.findFloor(buildingName);
-    }
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
 
     /**
-     * @param buildingName   大楼名称
-     * @param buttons     电梯上下按钮
-     * @param floorNumber 当前楼层号
+     * @param buildingName 大楼名称
+     * @param buttons      电梯上下按钮
+     * @param floorNumber  当前楼层号
      * @return 根据当前大楼名字, 与用户当前楼层号, 电梯上下按钮来进行调度电梯接用户
      */
     @Override
@@ -61,7 +57,10 @@ public class ElevatorServiceImpl implements ElevatorService {
             throw new UserException(ResponseEnum.PARAMETE_TEYP_ERROR);
         }
         //获取当栋大楼的楼层号,判断楼层号的范围
-        List<Floor> floors = elevatorMapper.findFloor(buildingName);
+        List<Floor> floors = redisTemplate.boundHashOps(CacheName.BUILDING_FLOOR_NUMBER + buildingName).values();
+        if (CollectionUtils.isEmpty(floors)) {
+            throw new RuntimeException("您输入的大楼名称有误");
+        }
         //获取对应楼层对象
         Floor floor = getFloorObject(floors, floorNumber);
         //获取楼层状态 1,最低楼  2,中间楼   3最高楼
@@ -74,8 +73,13 @@ public class ElevatorServiceImpl implements ElevatorService {
         } else if (floorStatus == 3 && "上".equals(buttons)) {
             throw new RuntimeException("您输入的楼层按钮不正确");
         }
+        List<Elevator> elevatorList;
         //根据当前大楼名称查询出所有对应的电梯数据
-        List<Elevator> elevatorList = elevatorMapper.findElevator(buildingName);
+        if (!redisTemplate.hasKey(CacheName.BUILDING_ELEVATOR_FLOOR + buildingName)) {
+            elevatorList = findElevator(buildingName);
+        } else {
+            elevatorList = redisTemplate.boundHashOps(CacheName.BUILDING_ELEVATOR_FLOOR + buildingName).values();
+        }
         //获取距离最近的电梯对象
         Elevator elevator = getElevatorObject(elevatorList, floorNumber, buttons);
         assert elevator != null;
@@ -86,19 +90,50 @@ public class ElevatorServiceImpl implements ElevatorService {
             //正常情况下,如果用户是往上按钮
             if ("上".equals(buttons)) {
                 //呼叫电梯往上运行
-                callElevatorUP(floorNumber, inFloor, floors, elevator);
+                elevator = callElevatorUP(floorNumber, inFloor, floors, elevator, buildingName);
                 //正常情况下,如果是往下按钮
             } else {
                 //呼叫电梯往下运行
-                callElevatorDown(floorNumber, inFloor, floors, elevator);
+                elevator = callElevatorDown(floorNumber, inFloor, floors, elevator, buildingName);
             }
         }
         //根据当前电梯id,获取对应电梯数据返回
-        Integer id = elevator.getId();
-        return elevatorMapper.callElevator(id);
+        return elevator;
     }
+
+    /**
+     * 根据当前大楼名称查询出所有对应的电梯数据
+     *
+     * @param buildingName 大楼名字
+     * @return
+     */
+    private List<Elevator> findElevator(String buildingName) {
+        if (StringUtils.isEmpty(buildingName)) {
+            throw new RuntimeException("您输入的大楼名错误");
+        }
+        //创建电梯对象
+//        org.lufengxue.pojo.elevator.elevatorPO.Elevator elevator = new org.lufengxue.pojo.elevator.elevatorPO.Elevator();
+        Elevator elevator = new Elevator();
+
+        //如果redis里面没有才从数据库里面查
+//        redisTemplate.boundHashOps(CacheName.CURRENT_ELEVATOR).
+        List<Elevator> elevatorList = elevatorMapper.findElevator(buildingName);
+        for (Elevator ele : elevatorList) {
+            elevator.setId(ele.getId());
+            elevator.setSports(ele.getSports());
+            elevator.setStatus(ele.getStatus());
+            elevator.setInFloor(ele.getInFloor());
+            elevator.setBuildingId(ele.getBuildingId());
+            Integer id = elevator.getId();
+            redisTemplate.boundHashOps(CacheName.BUILDING_ELEVATOR_FLOOR + buildingName).put(id, elevator);
+        }
+
+        return elevatorList;
+    }
+
     /**
      * 根据用户输入的目标楼层运行电梯接送用户到目的地
+     *
      * @param floorButtons 楼层按钮 目标楼层集合
      * @param id           电梯id
      * @return
@@ -144,8 +179,10 @@ public class ElevatorServiceImpl implements ElevatorService {
         //打印一下运行后的当前电梯数据
         return elevatorMapper.runElevator(id);
     }
+
     /**
      * 用户电梯运行
+     *
      * @param floors    符合条件的目标楼层集合
      * @param sports    当前电梯的运行状态 1 上, 2 下
      * @param inFloor   电梯所在楼层
@@ -211,8 +248,10 @@ public class ElevatorServiceImpl implements ElevatorService {
         }
         return fl;
     }
+
     /**
      * 运行电梯::根据目标楼层 与 运行状态 筛选出 符合条件的目标楼层
+     *
      * @param floorButtons 目标楼层按钮
      * @param inFloor      当前电梯所在楼层
      * @param sports       当前电梯运行的状态
@@ -238,15 +277,17 @@ public class ElevatorServiceImpl implements ElevatorService {
         }
         return list;
     }
+
     /**
      * 呼叫电梯::用户目标 往下
      *
-     * @param floorNumber 用户所在楼层号
-     * @param inFloor     电梯所在楼层
-     * @param floors      当前大楼所属的楼层对象
-     * @param elevator    当前电梯对象
+     * @param floorNumber  用户所在楼层号
+     * @param inFloor      电梯所在楼层
+     * @param floors       当前大楼所属的楼层对象
+     * @param elevator     当前电梯对象
+     * @param buildingName 大楼名用来更新redis数据条件
      */
-    public void callElevatorDown(Integer floorNumber, Integer inFloor, List<Floor> floors, Elevator elevator) {
+    public Elevator callElevatorDown(Integer floorNumber, Integer inFloor, List<Floor> floors, Elevator elevator, String buildingName) {
         //零时变量时间值 楼层值
         Double j = 0.0;
         int fl = 0;
@@ -288,7 +329,7 @@ public class ElevatorServiceImpl implements ElevatorService {
             for (Floor floor : floors) {
                 if (floor.getFloorNumber().equals(inFloor)) {
                     if (floor.getFloorNumber() <= floorNumber) {
-                        //如果用户目标往下走: 电梯正往上行 就楼层运行到最顶层 掉头
+                        //如果用户目标往下走: 电梯正往上行 上到用户楼层接到用户
                         for (int i = floor.getFloorNumber(); i <= floorNumber; i++) {
                             j++;
                             Double time = timeCount * j;
@@ -297,9 +338,10 @@ public class ElevatorServiceImpl implements ElevatorService {
                         }
                         log.info("电梯到达用户楼层{},开门", floorNumber);
                         break;
+                        //电梯楼层高于用户楼层,就掉头往下接到用户
                     } else if (floor.getFloorNumber() >= floorNumber) {
                         floors.sort((f1, f2) -> f2.getFloorNumber() - f1.getFloorNumber());
-                        for(int i = floor.getFloorNumber() ; i < floorNumber; i--) {
+                        for (int i = floor.getFloorNumber(); i < floorNumber; i--) {
                             j++;
                             Double time = timeCount * j;
                             fl = i;
@@ -312,21 +354,32 @@ public class ElevatorServiceImpl implements ElevatorService {
             }
         }
         //把电梯状态更新回数据库
-        Integer id = elevator.getId();
+        //把电梯状态更新回数据库
         inFloor = fl;
         sports = 2;
-        Integer buildingId = elevator.getBuildingId();
-        Integer status = elevator.getStatus();
-        elevatorMapper.updateElevator(id, inFloor, sports, status, buildingId);
+        Elevator ele = new Elevator();
+        ele.setId(elevator.getId());
+        ele.setStatus(elevator.getStatus());
+        ele.setInFloor(inFloor);
+        ele.setSports(sports);
+        Integer id = ele.getId();
+        // 存储大楼对应的的所有电梯(更新改变了的数据)
+        redisTemplate.boundHashOps(CacheName.BUILDING_ELEVATOR_FLOOR + buildingName).put(id, ele);
+        // 存储 当前电梯数据
+        redisTemplate.boundHashOps(CacheName.CURRENT_ELEVATOR).put(id, ele);
+        return ele;
     }
+
     /**
      * 呼叫电梯::用户目标 往上
-     * @param floorNumber 用户所在楼层
-     * @param inFloor     电梯所在楼层
-     * @param floors      当前大楼所属的楼层对象
-     * @param elevator    距离最近的电梯对象
+     *
+     * @param floorNumber  用户所在楼层
+     * @param inFloor      电梯所在楼层
+     * @param floors       当前大楼所属的楼层对象
+     * @param elevator     距离最近的电梯对象
+     * @param buildingName 大楼名字 更新redis数据条件
      */
-    public void callElevatorUP(Integer floorNumber, Integer inFloor, List<Floor> floors, Elevator elevator) {
+    public Elevator callElevatorUP(Integer floorNumber, Integer inFloor, List<Floor> floors, Elevator elevator, String buildingName) {
         //零时变量时间值
         Double j = 0.0;
         //楼层零时变量
@@ -401,13 +454,22 @@ public class ElevatorServiceImpl implements ElevatorService {
             }
         }
         //把电梯状态更新回数据库
-        Integer id = elevator.getId();
         inFloor = fl;
         sports = 1;
-        Integer buildingId = elevator.getBuildingId();
-        Integer status = elevator.getStatus();
-        elevatorMapper.updateElevator(id, inFloor, sports, status, buildingId);
+        Elevator ele = new Elevator();
+        ele.setId(elevator.getId());
+        ele.setStatus(elevator.getStatus());
+        ele.setInFloor(inFloor);
+        ele.setSports(sports);
+        Integer id = ele.getId();
+        // 存储大楼对应的的所有电梯(更新改变了的数据)
+        redisTemplate.boundHashOps(CacheName.BUILDING_ELEVATOR_FLOOR + buildingName).put(id, ele);
+        // 存储 当前电梯数据
+        redisTemplate.boundHashOps(CacheName.CURRENT_ELEVATOR).put(id, ele);
+        return ele;
+
     }
+
     /**
      * @param floors      楼层对象集合
      * @param floorNumber 用户所在楼层
@@ -431,6 +493,7 @@ public class ElevatorServiceImpl implements ElevatorService {
         }
         return fl;
     }
+
     /**
      * 获取用户楼层与 电梯楼层最近距离的电梯楼层
      *

@@ -1,6 +1,7 @@
 package org.lufengxue;
 
 import lombok.extern.slf4j.Slf4j;
+import org.lufengxue.constant.LogConstant;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
@@ -19,6 +20,6 @@ import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 public class EurekaApplication {
     public static void main(String[] args) {
         SpringApplication.run(EurekaApplication.class,args);
-        log.info("eureka执行了========================================");
+        log.info(LogConstant.PUN_FINISH,"eureka");
     }
 }

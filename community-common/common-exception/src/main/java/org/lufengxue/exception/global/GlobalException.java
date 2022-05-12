@@ -1,4 +1,5 @@
 package org.lufengxue.exception.global;
+
 import org.lufengxue.exception.proper.ExceptionPrintProperties;
 import org.lufengxue.exception.util.IPUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Objects;
@@ -46,7 +48,6 @@ public class GlobalException {
     }
 
 
-
     /**
      * 来源于系统的异常
      */
@@ -62,7 +63,7 @@ public class GlobalException {
     @ExceptionHandler({Throwable.class})
     public Result<String> runtimeException(Throwable e) {
         printError(e);
-        return Result.fail(B_SYSTEM_ERR);
+        return Result.fail(e.getMessage());
     }
 
 

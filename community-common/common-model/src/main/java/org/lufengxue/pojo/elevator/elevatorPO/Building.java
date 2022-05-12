@@ -20,6 +20,9 @@ import java.util.Set;
 @ApiModel("大楼")
 public class Building {
 
+    @ApiModelProperty("大楼id")
+    @Column(name = "id")
+    private Integer id;
 
     @ApiModelProperty("楼层：")
     private Set<Floor> floors;
@@ -27,8 +30,7 @@ public class Building {
 
     @ApiModelProperty("大楼名")
     @Column(name = "building_name")
-    private String   buildingName;
-
+    private String buildingName;
 
 
     @ApiModelProperty("电梯")

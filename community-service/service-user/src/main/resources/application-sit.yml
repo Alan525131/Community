@@ -1,8 +1,6 @@
 server:
   port: 18089
 spring:
-  application:
-    name: service-user
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://192.168.211.128:3306/elevator_management?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&serverTimezone=UTC
@@ -13,7 +11,6 @@ spring:
   #    password: 123456
   main:
     allow-bean-definition-overriding: true
-
 #  cloud:
 #    alibaba:
 #      seata:

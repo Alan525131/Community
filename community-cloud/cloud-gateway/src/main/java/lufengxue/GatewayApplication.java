@@ -1,6 +1,7 @@
 package lufengxue;
 
 import lombok.extern.slf4j.Slf4j;
+import org.lufengxue.constant.LogConstant;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -25,7 +26,7 @@ import reactor.core.publisher.Mono;
 public class GatewayApplication {
     public static void main(String[] args) {
         SpringApplication.run(GatewayApplication.class,args);
-        log.info("网关服务启动成功====================");
+        log.info(LogConstant.PUN_FINISH,"网关模块");
     }
 
 

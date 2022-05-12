@@ -3,6 +3,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
+
 
 /**
  * 作 者: 陆奉学
@@ -16,6 +18,7 @@ import lombok.Data;
 @Data
 @ApiModel("大楼")
 public class Building {
+
 
     @ApiModelProperty("大楼名")
     private String buildingName;

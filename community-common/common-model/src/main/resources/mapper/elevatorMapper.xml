@@ -25,15 +25,7 @@
     </update>
 
 
-    <!--根据大楼名查询出对应的所有楼层-->
-    <select id="findFloor" resultType="org.lufengxue.pojo.elevator.elevatorDto.Floor">
-        SELECT
-	            f.floor_number,f.floor_status,b.building_name
-        FROM
-	            floor as f  LEFT JOIN building as b ON b.id = f.building_id
-        WHERE
-	            b.building_name = #{buildingName}
-    </select>
+
 
     <!--查询 电梯表中的电梯数据  -->
     <select id="queryElevator" resultType="org.lufengxue.pojo.elevator.elevatorDto.Elevator">

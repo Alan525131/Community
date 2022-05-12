@@ -1,8 +1,6 @@
 server:
   port: 18088
 spring:
-  application:
-    name: service-elevator
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://192.168.211.128:3306/elevator_management?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&serverTimezone=UTC

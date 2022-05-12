@@ -20,7 +20,7 @@
                 username = #{username},password= #{password},sex = #{sex}, phone = #{phone},created_date = #{createdDate},
                 updated_date = #{updatedDate},nick_name = #{nickName},status = #{status}
         where
-                nick_name=#{nickName}
+                username=#{username}
     </update>
     <!--根据用户id删除数据-->
 

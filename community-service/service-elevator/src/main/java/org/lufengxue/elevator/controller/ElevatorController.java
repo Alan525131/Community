@@ -2,8 +2,8 @@ package org.lufengxue.elevator.controller;
 
 import org.lufengxue.elevator.service.ElevatorService;
 import io.swagger.annotations.*;
+import org.lufengxue.enums.StatusCode;
 import org.lufengxue.pojo.elevator.elevatorDto.Elevator;
-import org.lufengxue.pojo.elevator.elevatorDto.Floor;
 import org.lufengxue.response.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,13 +28,7 @@ public class ElevatorController {
     private ElevatorService elevatorService;
 
 
-    @GetMapping("/findFloor")
-    @ApiOperation("根据大楼名字查询所有楼层")
-    @ApiImplicitParam(name = "buildingName", value = "大楼名称", dataType = "String", paramType = "query", required = true)
-    public Result<List<Floor>> findFloor(String buildingName) {
-        List<Floor> floorList = elevatorService.findFloor(buildingName);
-        return new Result<>("DEFAULT_SUCCEED_CODE", "DEFAULT_SUCCEED_MSG", floorList);
-    }
+
 
     @GetMapping("/callElevator")
     @ApiOperation("根据当前大楼名字,与用户当前楼层号,电梯上下按钮来进行调度电梯接用户")
@@ -48,7 +42,7 @@ public class ElevatorController {
                                          @RequestParam(value = "floorNumber") Integer floorNumber) {
         Elevator elevator = elevatorService.callElevator(buildingName, buttons, floorNumber);
 
-        return new Result<>("DEFAULT_SUCCEED_CODE", "DEFAULT_SUCCEED_MSG", elevator);
+        return new Result(StatusCode.OK, "电梯成功到达用户楼层",  elevator);
     }
 
     @PostMapping("/runElevator")
@@ -56,6 +50,6 @@ public class ElevatorController {
     public Result<List<Elevator>> runElevator( @RequestParam(value = "floorButtons") @ApiParam(value = "目标楼层列表",required = true) Set<Integer> floorButtons,
                                                @RequestParam(value = "id") @ApiParam(value = "运行的电梯id",required = true) Integer id)  {
         List<Elevator> elevatorList = elevatorService.runElevator(floorButtons, id);
-        return new Result<>("DEFAULT_SUCCEED_CODE", "DEFAULT_SUCCEED_MSG", elevatorList);
+        return new Result(StatusCode.OK, "电梯成功运行完所有用户达到目的地", elevatorList);
     }
 }

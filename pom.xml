@@ -24,7 +24,7 @@
     <!--统一版本管理-->
     <properties>
         <!-- 业务版本号 -->
-        <submit.version>V1.0.2</submit.version>
+        <submit.version>V1.0.5</submit.version>
 
         <!-- 指定编码 -->
         <encoding>UTF-8</encoding>

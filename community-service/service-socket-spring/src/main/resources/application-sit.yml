@@ -1,0 +1,11 @@
+server:
+  port: 20310
+
+
+
+knife4j:
+  setting:
+    enable: true
+    swaggerModelName: 消息服务
+    description: 消息服务主要为前端与服务端提供消息与通支持, 路径 /msg/**
+    version: @submit.version@

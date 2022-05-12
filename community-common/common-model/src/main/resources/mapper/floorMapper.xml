@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.lufengxue.elevator.mapper.FloorMapper">
+
+    <!--根据大楼名查询出对应的所有楼层-->
+    <select id="findFloor" resultType="org.lufengxue.pojo.elevator.elevatorDto.Floor">
+        SELECT
+	            f.floor_number,f.floor_status,b.building_name,f.id
+        FROM
+	            floor as f  LEFT JOIN building as b ON b.id = f.building_id
+        WHERE
+	            b.building_name = #{buildingName}
+    </select>
+
+</mapper>

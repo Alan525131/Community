@@ -1,6 +1,7 @@
 package org.lufengxue.elevator.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.lufengxue.pojo.elevator.elevatorDto.Elevator;
 import org.lufengxue.pojo.elevator.elevatorDto.Floor;
 
@@ -16,13 +17,6 @@ import java.util.List;
 public interface ElevatorMapper {
 
 
-    /**
-     * 根据大楼名查询出对应的所有楼层
-     *
-     * @param buildingName
-     * @return
-     */
-    List<Floor> findFloor(String buildingName);
 
     /**
      * 根据id 查询对应电梯列表数据
@@ -46,7 +40,7 @@ public interface ElevatorMapper {
      * @param status   电梯是否可用
      * @param buildingId   电梯对应的大楼id
      */
-    void updateInFloor(Integer inFloor, Integer sports, Integer status, Integer buildingId,Integer id);
+    void updateInFloor( @Param("inFloor") Integer inFloor,@Param("sports") Integer sports, @Param("status")Integer status,@Param("buildingId") Integer buildingId,@Param("id") Integer id);
 
 
     /**
@@ -77,6 +71,6 @@ public interface ElevatorMapper {
      * @param status   电梯是否可用
      * @param buildingId   电梯对应的大楼id
      */
-    void updateElevator(Integer id, Integer inFloor, Integer sports, Integer status, Integer buildingId);
+    void updateElevator(@Param("id")Integer id,@Param("inFloor") Integer inFloor,@Param("sports") Integer sports,@Param("status") Integer status,@Param("buildingId") Integer buildingId);
 
 }

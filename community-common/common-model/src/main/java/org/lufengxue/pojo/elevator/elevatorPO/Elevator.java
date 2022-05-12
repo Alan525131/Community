@@ -1,7 +1,9 @@
 package org.lufengxue.pojo.elevator.elevatorPO;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
@@ -15,19 +17,13 @@ import java.util.Set;
  * 描    述:
  */
 @Data
-@Table(name="eleyator")
+@Table(name = "eleyator")
 @ApiModel(value = "电梯")
-public class  Elevator implements Serializable {
+public class Elevator implements Serializable {
 
     @ApiModelProperty("电梯id")
     @Column(name = "id")
     private Integer id;
-
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "id", length = 20, nullable = false)
-//    private int id;
-
 
     @ApiModelProperty("大楼id")
     @Column(name = "building_id")
@@ -38,11 +34,11 @@ public class  Elevator implements Serializable {
     private Integer status;
 
     @ApiModelProperty(value = "电梯速度：秒/米")
-    private Double speed = 0.5 ;
+    private Double speed;
 
     @ApiModelProperty(value = "电梯所在楼层")
     @Column(name = "inFloor")
-    private Integer inFloor = 10;
+    private Integer inFloor;
 
     @ApiModelProperty("电梯门开关 true 开，false 关， ")
     private Boolean isOpen;

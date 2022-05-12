@@ -1,6 +1,8 @@
 package org.lufengxue;
 
 
+import lombok.extern.slf4j.Slf4j;
+import org.lufengxue.constant.LogConstant;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * 时    间:  0:35
  * 描    述:
  */
+@Slf4j
 @EnableEurekaClient
 @SpringBootApplication
 @MapperScan(basePackages = "org.lufengxue.user.mapper")
@@ -24,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class UserApplication {
     public static void main(String[] args) {
         SpringApplication.run(UserApplication.class,args);
+        log.info(LogConstant.PUN_FINISH,"用户模块");
     }
         @Bean
     public PasswordEncoder passwordEncoder() {

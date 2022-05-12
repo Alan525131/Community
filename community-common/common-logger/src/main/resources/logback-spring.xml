@@ -8,7 +8,7 @@
     <!--服务端口-->
     <springProperty name="SERVER_PORT" scope="context" source="server.port" defaultValue="0000"/>
     <!--文件路径-->
-    <springProperty name="FILE_PATH" scope="context" source="logging.file.path" defaultValue="./../logs"/>
+    <springProperty name="FILE_PATH" scope="context" source="logging.file.path" defaultValue="/opt/webapp/logs"/>
     <!--最大文件大小-->
     <springProperty name="MAX_FILE_SIZE" scope="context" source="logging.file.maxSize" defaultValue="100MB"/>
     <!--最久保留时间(天)-->

@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.SimpleTimeZone;
 
 /**
  * 作 者: 陆奉学
@@ -20,7 +22,11 @@ import javax.persistence.Table;
 @Data
 @Table(name = "floor")
 @ApiModel(value = "floor", description = "楼层")
-public class Floor {
+public class Floor implements Serializable {
+
+    @ApiModelProperty("楼层id")
+    @Column(name = "id")
+    private Integer id;
 
     @ApiModelProperty("当前楼层号")
     @Column(name = "floor_number")

@@ -2,10 +2,9 @@ package org.lufengxue.response;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.lufengxue.enums.ResponseEnum;
+import org.lufengxue.enums.StatusCode;
 import org.lufengxue.exception.BaseException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -13,52 +12,41 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 
 
-
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@ApiModel(description= "返回响应数据")
+@ApiModel(description = "返回响应数据")
 public class Result<T> implements Serializable {
 
 
-    /**
-     * 默认成功编码: 00000, 成功http状态: 200
-     */
-    protected static final String DEFAULT_SUCCEED_CODE = "00000";
-    /**
-     * 成功消息: SUCCEED,
-     */
-    protected static final String DEFAULT_SUCCEED_MSG = "SUCCEED";
 
+    @ApiModelProperty(required = true, value = "返回成功状态码 200为成功,其它为失败")
+    protected String code;
 
-    @ApiModelProperty(required = true, value = "返回状态码 DEFAULT_SUCCEED_CODE 为成功 ")
-    protected  String code;
-
-    @ApiModelProperty(required = true, value = "返回成功提示信息 DEFAULT_SUCCEED_MSG")
+    @ApiModelProperty(required = true, value = "返回成功提示信息 ")
     protected String message;
 
     @ApiModelProperty(required = false, value = "返回逻辑数据")
     protected T data;
 
 
-
     /**
-     *
      * @param <T>
      * @return 返回成功消息
      */
     public static <T> Result<T> success() {
-        return new Result<T>(DEFAULT_SUCCEED_CODE,DEFAULT_SUCCEED_MSG,null);
+        return new Result<T>( StatusCode.OK,"操作成功");
 
     }
 
-    public static <T>  Result<T> success( T data) {
-        return new Result<T>(DEFAULT_SUCCEED_CODE,DEFAULT_SUCCEED_MSG,data);
+    public static <T> Result<T> success(T data) {
+        return new Result<T>(StatusCode.OK, "操作成功", data);
     }
+
+//    public static <T> Result<T> success(ResponseEnum seEnum,T data) {
+//        return new Result<T>(seEnum, "操作成功", data);
+//    }
 
 
     /**
-     *
      * @param seEnum
      * @param <T>
      * @return 返回失败消息
@@ -73,10 +61,28 @@ public class Result<T> implements Serializable {
         return new Result<T>(e.getCode(), e.getMsg());
     }
 
+    public static <T> Result<T> fail(String msg) {
+        setHttpStatus(500);
+        return new Result<T>("500", msg);
+    }
+
     /**
-     *  构造函数
-     * @param code 状态码
-     * @param message   错误消息
+     * 构造函数
+     *
+     * @param code    状态码
+     * @param message 错误消息
+     */
+    public Result(String code, String message,T data) {
+        this.code = code;
+        this.message = message;
+        this.data = data;
+    }
+
+    /**
+     * 构造函数
+     *
+     * @param code    状态码
+     * @param message 错误消息
      */
     public Result(String code, String message) {
         this.code = code;
