@@ -1,7 +1,9 @@
 package org.lufengxue.pojo.elevator.elevatorDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 
@@ -19,8 +21,13 @@ import javax.persistence.Column;
 @ApiModel("大楼")
 public class Building {
 
+    @ApiModelProperty("大楼id")
+    private Integer id;
 
     @ApiModelProperty("大楼名")
     private String buildingName;
+
+    @ApiModelProperty("大楼id")
+    private Integer buildingId;
 
 }

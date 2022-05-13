@@ -13,9 +13,10 @@ public class CacheName {
 //    public static final String USER = "user";
 
     /**
-     *  大楼 对应大楼楼层的前缀
+     *  大楼对应的大楼楼层号的前缀
      */
     public static final String  BUILDING_FLOOR_NUMBER = "buildingFloor";
+
 
     /**
      *  大楼对应的电梯楼层前缀
@@ -26,4 +27,9 @@ public class CacheName {
      *  当前电梯数据前缀
      */
     public static final String CURRENT_ELEVATOR = "elevator";
+
+    /**
+     *  当前电梯id 对应的大楼所有电梯属性前缀
+     */
+    public static final String GET_ALL_ELEVATORS_BY_ID ="buildingId";
 }

@@ -20,6 +20,8 @@ import java.util.SimpleTimeZone;
  * 描    述:
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "floor")
 @ApiModel(value = "floor", description = "楼层")
 public class Floor implements Serializable {
@@ -39,6 +41,10 @@ public class Floor implements Serializable {
     @ApiModelProperty("楼层状态：1，最低楼，2中间楼，3最高楼")
     @Column(name = "floor_status")
     private Integer floorStatus;
+
+    @ApiModelProperty("楼层与大楼关联关系")
+    @Column(name = "building_id")
+    private Integer buildingId;
 
     @ApiModelProperty("楼层每层高度")
     private Double floorHeight;

@@ -10,9 +10,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>service-elevator</artifactId>
+    <description>电梯微服务</description>
 
     <dependencies>
-
         <!--集合工具类依赖-->
         <dependency>
             <groupId>commons-collections</groupId>
@@ -24,11 +24,18 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>common-api</artifactId>
         </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>common-redis</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>org.lufengxue</groupId>-->
+<!--            <artifactId>service-socket-spring</artifactId>-->
+<!--            <version>1.0.0</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>

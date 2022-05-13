@@ -17,17 +17,6 @@
             <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
 
-<!--        &lt;!&ndash; web 服务 &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-web</artifactId>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>${project.groupId}</groupId>-->
-<!--            <artifactId>common-model</artifactId>-->
-<!--            <version>${project.version}</version>-->
-<!--        </dependency>-->
     </dependencies>
 
 </project>

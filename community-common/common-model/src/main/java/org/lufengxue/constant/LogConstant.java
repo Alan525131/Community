@@ -8,6 +8,6 @@ package org.lufengxue.constant;
 public class LogConstant {
     public static final String PUN_FINISH =
             "\n\n\t∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵∵" +
-              "\n\t  ヾ(＠˘ω˘＠)ノ  {}启动成功  ლ(＾ω＾ლ)" +
+              "\n\t  ヾ(＠˘ω˘＠)ノ     {}启动成功         ლ(＾ω＾ლ)" +
               "\n\t∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴∴\n";
 }

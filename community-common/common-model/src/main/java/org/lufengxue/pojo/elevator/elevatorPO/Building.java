@@ -2,7 +2,9 @@ package org.lufengxue.pojo.elevator.elevatorPO;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import java.util.Set;
@@ -18,22 +20,32 @@ import java.util.Set;
 
 @Data
 @ApiModel("大楼")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Building {
 
     @ApiModelProperty("大楼id")
     @Column(name = "id")
     private Integer id;
 
-    @ApiModelProperty("楼层：")
-    private Set<Floor> floors;
-
 
     @ApiModelProperty("大楼名")
     @Column(name = "building_name")
     private String buildingName;
 
+    @ApiModelProperty("大楼id")
+    private Integer buildingId;
+
+    @ApiModelProperty("楼层：")
+    private Set<Floor> floors;
+
+
 
     @ApiModelProperty("电梯")
     private Set<Elevator> elevators;
+
+
+
+
 
 }

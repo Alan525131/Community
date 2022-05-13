@@ -1,6 +1,7 @@
 package org.lufengxue.elevator.service.impl;
 
 
+import com.alibaba.fastjson.JSON;
 import org.lufengxue.contanents.CacheName;
 import org.lufengxue.elevator.mapper.ElevatorMapper;
 import org.lufengxue.elevator.service.ElevatorService;
@@ -38,7 +39,8 @@ public class ElevatorServiceImpl implements ElevatorService {
     @Autowired
     private RedisTemplate redisTemplate;
 
-
+//    @Autowired
+//    private WebSocket webSocket;
     /**
      * @param buildingName 大楼名称
      * @param buttons      电梯上下按钮
@@ -80,6 +82,9 @@ public class ElevatorServiceImpl implements ElevatorService {
         } else {
             elevatorList = redisTemplate.boundHashOps(CacheName.BUILDING_ELEVATOR_FLOOR + buildingName).values();
         }
+//        // 转成json 在推送给用户
+//        String message = JSON.toJSONString(elevatorList);
+//        webSocket.sendMessage(message);
         //获取距离最近的电梯对象
         Elevator elevator = getElevatorObject(elevatorList, floorNumber, buttons);
         assert elevator != null;
@@ -112,11 +117,8 @@ public class ElevatorServiceImpl implements ElevatorService {
             throw new RuntimeException("您输入的大楼名错误");
         }
         //创建电梯对象
-//        org.lufengxue.pojo.elevator.elevatorPO.Elevator elevator = new org.lufengxue.pojo.elevator.elevatorPO.Elevator();
         Elevator elevator = new Elevator();
-
         //如果redis里面没有才从数据库里面查
-//        redisTemplate.boundHashOps(CacheName.CURRENT_ELEVATOR).
         List<Elevator> elevatorList = elevatorMapper.findElevator(buildingName);
         for (Elevator ele : elevatorList) {
             elevator.setId(ele.getId());
@@ -125,7 +127,11 @@ public class ElevatorServiceImpl implements ElevatorService {
             elevator.setInFloor(ele.getInFloor());
             elevator.setBuildingId(ele.getBuildingId());
             Integer id = elevator.getId();
+            Integer buildingId = elevator.getBuildingId();
+            //根据大楼名存储所有对应电梯
             redisTemplate.boundHashOps(CacheName.BUILDING_ELEVATOR_FLOOR + buildingName).put(id, elevator);
+            // 根据buildingId存储所有对应的电梯数据
+            redisTemplate.boundHashOps(CacheName.GET_ALL_ELEVATORS_BY_ID +buildingId ).put(id,elevator);
         }
 
         return elevatorList;
@@ -145,7 +151,8 @@ public class ElevatorServiceImpl implements ElevatorService {
             throw new RuntimeException("floorButtons参数不可为空");
         }
         //根据电梯id 查询电梯列表获取对应的属性,
-        Elevator elevator = elevatorMapper.queryElevator(id);
+//        Elevator elevator = elevatorMapper.queryElevator(id);
+        Elevator elevator = (Elevator) redisTemplate.boundHashOps(CacheName.CURRENT_ELEVATOR).get(id);
         //status 电梯使用状态: 1 可用，2不可用
         Integer status = elevator.getStatus();
         //sports 电梯运行状态：1 往上，2往下，3静止
@@ -168,12 +175,17 @@ public class ElevatorServiceImpl implements ElevatorService {
         //获取符合条件的目标楼层
         List<Integer> floors = getfloorButtons(floorButtons, inFloor, sports);
         //根据用户电梯id 查询出大楼对应的楼层号 用来遍历电梯
-        List<Floor> floorList = elevatorMapper.getFloorNumber(id);
+        List<Floor> floorList;
+        Integer buildingId = elevator.getBuildingId();
+        if (! redisTemplate.hasKey(CacheName.GET_ALL_ELEVATORS_BY_ID + buildingId)) {
+            floorList = elevatorMapper.getFloorNumber(id);
+        }
+        //根据当前电梯获取对应大楼的楼层号
+        floorList = redisTemplate.boundHashOps(CacheName.GET_ALL_ELEVATORS_BY_ID + buildingId).values();
         // 调用用户电梯运行方法
         inFloor = getRunElevator(floors, sports, inFloor, floorList);
 
         // 每次电梯停下之后,根据电梯id,把电梯楼层位置设置回电梯表中
-        Integer buildingId = elevator.getBuildingId();
         elevatorMapper.updateInFloor(inFloor, sports, status, buildingId, id);
 
         //打印一下运行后的当前电梯数据
@@ -362,6 +374,7 @@ public class ElevatorServiceImpl implements ElevatorService {
         ele.setStatus(elevator.getStatus());
         ele.setInFloor(inFloor);
         ele.setSports(sports);
+        ele.setBuildingId(elevator.getBuildingId());
         Integer id = ele.getId();
         // 存储大楼对应的的所有电梯(更新改变了的数据)
         redisTemplate.boundHashOps(CacheName.BUILDING_ELEVATOR_FLOOR + buildingName).put(id, ele);
@@ -461,6 +474,7 @@ public class ElevatorServiceImpl implements ElevatorService {
         ele.setStatus(elevator.getStatus());
         ele.setInFloor(inFloor);
         ele.setSports(sports);
+        ele.setBuildingId(elevator.getBuildingId());
         Integer id = ele.getId();
         // 存储大楼对应的的所有电梯(更新改变了的数据)
         redisTemplate.boundHashOps(CacheName.BUILDING_ELEVATOR_FLOOR + buildingName).put(id, ele);
