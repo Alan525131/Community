@@ -22,6 +22,7 @@
 <!--        where-->
 <!--                nick_name=#{nickName}-->
 <!--    </update>-->
+
 <!--    &lt;!&ndash;根据用户id删除数据&ndash;&gt;-->
 
 <!--    <delete id="deleteId" parameterType="String">-->
