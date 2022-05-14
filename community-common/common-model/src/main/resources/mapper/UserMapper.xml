@@ -22,8 +22,8 @@
         where
                 username=#{username}
     </update>
-    <!--根据用户id删除数据-->
 
+<!--    &lt;!&ndash;根据用户id删除数据&ndash;&gt;-->
     <delete id="deleteId" parameterType="String">
         delete from ele_user where username=#{username}
     </delete>

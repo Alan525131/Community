@@ -19,9 +19,6 @@ import java.util.Set;
  * 描    述:
  */
 @Data
-
-@AllArgsConstructor
-@NoArgsConstructor
 @Table(name = "eleyator")
 @ApiModel(value = "电梯")
 public class Elevator implements Serializable {
@@ -30,32 +27,40 @@ public class Elevator implements Serializable {
     @Column(name = "id")
     private Integer id;
 
-
-    @ApiModelProperty("大楼id")
-    @Column(name = "building_id")
-    private Integer buildingId;
+    @ApiModelProperty("电梯运行状态：1 往上，2往下，3静止")
+    @Column(name = "sports")
+    private Integer sports;
 
     @ApiModelProperty(value = "电梯使用状态: 1 可用，2不可用")
     @Column(name = "status")
     private Integer status;
 
-    @ApiModelProperty(value = "电梯速度：秒/米")
-    private Double speed;
 
     @ApiModelProperty(value = "电梯所在楼层")
     @Column(name = "inFloor")
     private Integer inFloor;
 
-    @ApiModelProperty("电梯门开关 true 开，false 关， ")
-    private Boolean isOpen;
+    @ApiModelProperty("大楼id")
+    @Column(name = "building_id")
+    private Integer buildingId;
 
-    @ApiModelProperty("求救铃声")
-    private Integer call;
+    @ApiModelProperty(value = "电梯速度：秒/米")
+    private Double speed;
+
 
     @ApiModelProperty("楼层按钮")
     private Set<Integer> floorButtons;
 
-    @ApiModelProperty("电梯运行状态：1 往上，2往下，3静止")
-    @Column(name = "sports")
-    private Integer sports;
+
+    public Elevator() {
+    }
+
+    public Elevator(Integer id, Integer sports, Integer status, Integer inFloor, Integer buildingId, Double speed) {
+        this.id = id;
+        this.sports = sports;
+        this.status = status;
+        this.inFloor = inFloor;
+        this.buildingId = buildingId;
+        this.speed = speed;
+    }
 }

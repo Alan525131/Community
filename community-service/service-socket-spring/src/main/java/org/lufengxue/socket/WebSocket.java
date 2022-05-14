@@ -1,8 +1,6 @@
 package org.lufengxue.socket;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
@@ -43,10 +41,10 @@ public class WebSocket {
      */
     @OnOpen
     public void onOpen(Session session, @PathParam("user") String user) throws IOException {
+        webSocketMap.put(user, session);
         log.info("user {} 建立连接, 当前在线人数为:{}", user, webSocketMap.size());
         this.user = user;
         this.session = session;
-        webSocketMap.put(user, session);
     }
 
     /**
@@ -65,8 +63,8 @@ public class WebSocket {
      */
     @OnMessage
     public void onMessage(String message, Session session) throws IOException {
-        log.debug("收到客户端消息: {}", message);
-//        session.getBasicRemote().sendText("大家好");
+        log.info("收到客户端消息: {}", message);
+        sendAll(user + " 说: " + message);
     }
 
 
@@ -83,23 +81,21 @@ public class WebSocket {
      *
      * @param message 字符串消息
      */
-    @SneakyThrows
     public void sendMessage(String message) {
-        this.session.getBasicRemote().sendText(message);
-        //this.session.getAsyncRemote().sendText(message);
+        //this.session.getBasicRemote().sendText(message);
+        this.session.getAsyncRemote().sendText(message);
     }
 
 
     /**
      * 群发自定义消息
      */
-    @SneakyThrows
     public static void sendAll(String message) {
         for (Session session : webSocketMap.values()) {
             //表示同步发送
-            session.getBasicRemote().sendText("message");
+            //session.getBasicRemote().sendText("message");
             //表示异步发送
-            //this.session.getAsyncRemote().sendText(message);
+            session.getAsyncRemote().sendText(message);
         }
     }
 }

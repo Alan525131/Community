@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -22,7 +23,7 @@ import java.util.Set;
 @ApiModel("大楼")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Building {
+public class Building implements Serializable {
 
     @ApiModelProperty("大楼id")
     @Column(name = "id")

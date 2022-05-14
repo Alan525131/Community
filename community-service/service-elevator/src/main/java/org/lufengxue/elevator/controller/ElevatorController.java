@@ -48,10 +48,10 @@ public class ElevatorController {
 
     @PostMapping("/runElevator")
     @ApiOperation("根据用户输入的目标楼层集合运行电梯接送用户到目的地")
-    public Result<List<Elevator>> runElevator( @RequestParam(value = "floorButtons") @ApiParam(value = "目标楼层列表",required = true) Set<Integer> floorButtons,
+    public Result<Elevator> runElevator( @RequestParam(value = "floorButtons") @ApiParam(value = "目标楼层列表",required = true) Set<Integer> floorButtons,
                                                @RequestParam(value = "id") @ApiParam(value = "运行的电梯id",required = true) Integer id)  {
-        List<Elevator> elevatorList = elevatorService.runElevator(floorButtons, id);
-        return new Result(StatusCode.OK, "电梯成功运行完所有用户达到目的地", elevatorList);
+        Elevator elevator = elevatorService.runElevator(floorButtons, id);
+        return new Result(StatusCode.OK, "电梯成功运行完所有用户达到目的地", elevator);
     }
 }
 

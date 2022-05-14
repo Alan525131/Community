@@ -5,14 +5,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.lufengxue.contanents.CacheName;
 import org.lufengxue.elevator.mapper.FloorMapper;
 import org.lufengxue.elevator.service.FloorService;
+import org.lufengxue.elevator.service.config.ElevatorConfig;
 import org.lufengxue.pojo.elevator.elevatorDto.Floor;
+import org.lufengxue.pojo.elevator.elevatorPO.Building;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author : Allen
@@ -27,7 +27,7 @@ public class FloorServiceImpl implements FloorService {
     private RedisTemplate redisTemplate;
 
     @Autowired
-    private FloorMapper floorMapper;
+    private ElevatorConfig elevatorConfig;
 
     /**
      * @param buildingName 大楼名字
@@ -39,17 +39,9 @@ public class FloorServiceImpl implements FloorService {
         if (StringUtils.isEmpty(buildingName)) {
             throw new RuntimeException("大楼名称不能为空");
         }
-        List<Floor> floors;
         // 如果缓存当中没有当前大楼的 楼层数据就从缓存当中查找
-        if (!redisTemplate.hasKey(CacheName.BUILDING_FLOOR_NUMBER + buildingName)) {
-
-            floors = getFindFloor(buildingName);
-
-            //否则就根据 大楼名从redis 获取所有的对应楼层
-        } else {
-            floors = redisTemplate.boundHashOps(CacheName.BUILDING_FLOOR_NUMBER + buildingName).values();
-            floors.sort((f1,f2)->f1.getId() - f2.getId());
-        }
+        List<Floor> floors = getFindFloor(buildingName);
+        floors.sort((f1, f2) -> f1.getId() - f2.getId());
         return floors;
     }
 
@@ -59,18 +51,21 @@ public class FloorServiceImpl implements FloorService {
      * @param buildingName
      * @return
      */
-    private List<Floor> getFindFloor(String buildingName) {
-        // 创建楼层对象
+    public List<Floor> getFindFloor(String buildingName) {
+        // 创建楼层对象 //把po 转成do
         Floor floorRedis = new Floor();
+        List<Floor> floorList = new ArrayList<>();
+
         // 第一次从数据库中查出来
-        List<Floor> floors = floorMapper.findFloor(buildingName);
-        for (Floor floor : floors) {
-            floorRedis.setId(floor.getId());
-            floorRedis.setFloorNumber(floor.getFloorNumber());
-            floorRedis.setFloorStatus(floor.getFloorStatus());
-            Integer id = floorRedis.getId();
-            redisTemplate.boundHashOps(CacheName.BUILDING_FLOOR_NUMBER + buildingName).put(id, floorRedis);
-        }
-        return floors;
+        Building building = elevatorConfig.getBuildingInstance(buildingName);
+        //获取到楼层对象集合
+        Set<org.lufengxue.pojo.elevator.elevatorPO.Floor> floors = building.getFloors();
+        for (org.lufengxue.pojo.elevator.elevatorPO.Floor floor : floors) {
+                floorRedis.setId(floor.getId());
+                floorRedis.setFloorNumber(floor.getFloorNumber());
+                floorRedis.setFloorStatus(floor.getFloorStatus());
+                floorList.add(floorRedis);
+            }
+        return floorList;
     }
 }
